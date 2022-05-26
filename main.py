@@ -97,7 +97,7 @@ def get_vacancies_sj(languages, key):
     return languages
 
 
-def clever_print(statistics, title):
+def make_clever_print(statistics, title):
     table_data = [
         (
             "Язык программирования",
@@ -133,13 +133,13 @@ if __name__ == "__main__":
     sj_key = dotenv_values(".env")["SJ_SECRET_KEY"]
     try:
         print(
-            clever_print(
+            make_clever_print(
                 get_vacancies_hh(top_languages),
                 "Вакансии HeadHunter в Москве"
             ),
             end="\n\n"
         )
-        print(clever_print(
+        print(make_clever_print(
             get_vacancies_sj(top_languages, sj_key),
             "Вакансии SuperJob в Москве"
         ))
