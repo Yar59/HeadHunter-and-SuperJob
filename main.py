@@ -1,3 +1,5 @@
+import logging
+
 import requests
 from itertools import count
 
@@ -18,11 +20,14 @@ def get_vacancies_hh(language):
         }
         response = requests.get(url, params=payload)
         response.raise_for_status()
+        if response.json()["found"] == 0:
+            logging.warning(f"Данные по языку {language} от сервиса HH не найдены")
+            break
         vacancies_pages.append(response)
         if page >= response.json()['pages'] - 1:
             break
 
-    print(f"Получены данные по языку {language} от сервиса HH")
+    logging.info(f"Завершено получение данных по языку {language} от сервиса HH")
     return vacancies_pages
 
 
@@ -42,11 +47,14 @@ def get_vacancies_sj(language, key):
         }
         response = requests.get(url, headers=headers, params=payload)
         response.raise_for_status()
+        if response.json()["total"] == 0:
+            logging.warning(f"Данные по языку {language} от сервиса SJ не найдены")
+            break
         vacancies_pages.append(response)
         if not response.json()['more']:
             break
 
-    print(f"Получены данные по языку {language} от сервиса SJ")
+    logging.info(f"Завершено получение данных по языку {language} от сервиса SJ")
     return vacancies_pages
 
 
@@ -155,9 +163,11 @@ if __name__ == "__main__":
         top_languages_info_sj = {}
         for language in top_languages:
             vacancies_pages_hh = get_vacancies_hh(language)
-            top_languages_info_hh[language] = process_vacancies_hh(vacancies_pages_hh)
+            if vacancies_pages_hh:
+                top_languages_info_hh[language] = process_vacancies_hh(vacancies_pages_hh)
             vacancies_pages_sj = get_vacancies_sj(language, sj_key)
-            top_languages_info_sj[language] = process_vacancies_sj(vacancies_pages_sj)
+            if vacancies_pages_sj:
+                top_languages_info_sj[language] = process_vacancies_sj(vacancies_pages_sj)
 
         print(
             make_clever_print(
