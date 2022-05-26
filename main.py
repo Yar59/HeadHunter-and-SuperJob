@@ -18,9 +18,9 @@ def get_vacancies_hh(languages):
                 "page": page,
                 "per_page": 100
             }
-            r = requests.get(url, params=payload)
-            r.raise_for_status()
-            for vacancy in r.json()["items"]:
+            response = requests.get(url, params=payload)
+            response.raise_for_status()
+            for vacancy in response.json()["items"]:
                 salary = calculate_rub_salary_hh(vacancy)
                 if salary:
                     languages[language]["average"] += salary
