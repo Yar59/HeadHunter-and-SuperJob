@@ -42,7 +42,6 @@ def calculate_rub_salary_hh(vacancy):
         salary_to = vacancy["salary"]["to"]
         if currency == "RUR":
             return calculate_salary(salary_from, salary_to)
-    return None
 
 
 def calculate_rub_salary_sj(vacancy):
@@ -51,7 +50,6 @@ def calculate_rub_salary_sj(vacancy):
     currency = vacancy["currency"]
     if currency == "rub":
         return calculate_salary(salary_from, salary_to)
-    return None
 
 
 def calculate_salary(salary_from, salary_to):
