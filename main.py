@@ -20,13 +20,15 @@ def get_vacancies_hh(languages):
             }
             response = requests.get(url, params=payload)
             response.raise_for_status()
-            for vacancy in response.json()["items"]:
+            vacancies = response.json()["items"]
+            total_vacancies = response.json()["found"]
+            for vacancy in vacancies:
                 salary = calculate_rub_salary_hh(vacancy)
                 if salary:
                     languages[language]["average"] += salary
                     languages[language]["vacancies_processed"] += 1
-            languages[language]["vacancies_found"] = r.json()["found"]
-            if page >= r.json()['pages'] - 1:
+            languages[language]["vacancies_found"] = total_vacancies
+            if page >= response.json()['pages'] - 1:
                 break
         languages[language]["average"] = int(languages[language]["average"] / languages[language]["vacancies_processed"])
         print(f"Получены данные по языку {language}")
@@ -82,12 +84,14 @@ def get_vacancies_sj(languages, key):
             }
             response = requests.get(url, headers=headers, params=payload)
             response.raise_for_status()
-            for vacancy in response.json()["objects"]:
+            vacancies = response.json()["objects"]
+            total_vacancies = response.json()["total"]
+            for vacancy in vacancies:
                 salary = calculate_rub_salary_sj(vacancy)
                 if salary:
                     languages[language]["average"] += salary
                     languages[language]["vacancies_processed"] += 1
-                    languages[language]["vacancies_found"] += response.json()["total"]
+                    languages[language]["vacancies_found"] += total_vacancies
 
             if not response.json()['more']:
                 break
