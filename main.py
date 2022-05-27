@@ -159,27 +159,26 @@ if __name__ == "__main__":
         "PHP",
     ]
     sj_key = dotenv_values(".env")["SJ_SECRET_KEY"]
-    try:
-        top_languages_info_hh = {}
-        top_languages_info_sj = {}
-        for language in top_languages:
+    top_languages_info_hh = {}
+    top_languages_info_sj = {}
+    for language in top_languages:
+        try:
             vacancies_pages_hh = get_vacancies_hh(language)
             if vacancies_pages_hh:
                 top_languages_info_hh[language] = process_vacancies_hh(vacancies_pages_hh)
             vacancies_pages_sj = get_vacancies_sj(language, sj_key)
             if vacancies_pages_sj:
                 top_languages_info_sj[language] = process_vacancies_sj(vacancies_pages_sj)
-
-        print(
-            make_clever_print(
-                top_languages_info_hh,
-                "Вакансии HeadHunter в Москве"
-            ),
-            end="\n\n"
-        )
-        print(make_clever_print(
-            top_languages_info_sj,
-            "Вакансии SuperJob в Москве"
-        ))
-    except requests.exceptions.HTTPError as error:
-        exit("Can't get data from server:\n{0}".format(error))
+        except requests.exceptions.HTTPError as error:
+            logging.error("Can't get data from server:\n{0}".format(error))
+    print(
+        make_clever_print(
+            top_languages_info_hh,
+            "Вакансии HeadHunter в Москве"
+        ),
+        end="\n\n"
+    )
+    print(make_clever_print(
+        top_languages_info_sj,
+        "Вакансии SuperJob в Москве"
+    ))
