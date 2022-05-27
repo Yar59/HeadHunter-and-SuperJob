@@ -21,7 +21,7 @@ def get_vacancies_hh(language):
         response = requests.get(url, params=payload)
         response.raise_for_status()
         vacancies_page = response.json()
-        if vacancies_page["found"]  == 0:
+        if not vacancies_page["found"]:
             logging.warning(f"Данные по языку {language} от сервиса HH не найдены")
             break
         vacancies_pages.append(vacancies_page)
@@ -49,7 +49,7 @@ def get_vacancies_sj(language, key):
         response = requests.get(url, headers=headers, params=payload)
         response.raise_for_status()
         vacancies_page = response.json()
-        if vacancies_page["total"] == 0:
+        if not vacancies_page["total"]:
             logging.warning(f"Данные по языку {language} от сервиса SJ не найдены")
             break
         vacancies_pages.append(vacancies_page)
