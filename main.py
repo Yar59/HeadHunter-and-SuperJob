@@ -20,11 +20,12 @@ def get_vacancies_hh(language):
         }
         response = requests.get(url, params=payload)
         response.raise_for_status()
-        if response.json()["found"] == 0:
+        vacancies_page = response.json()
+        if vacancies_page["found"]  == 0:
             logging.warning(f"Данные по языку {language} от сервиса HH не найдены")
             break
-        vacancies_pages.append(response)
-        if page >= response.json()['pages'] - 1:
+        vacancies_pages.append(vacancies_page)
+        if page >= vacancies_page['pages'] - 1:
             break
 
     logging.info(f"Завершено получение данных по языку {language} от сервиса HH")
@@ -47,11 +48,12 @@ def get_vacancies_sj(language, key):
         }
         response = requests.get(url, headers=headers, params=payload)
         response.raise_for_status()
-        if response.json()["total"] == 0:
+        vacancies_page = response.json()
+        if vacancies_page["total"] == 0:
             logging.warning(f"Данные по языку {language} от сервиса SJ не найдены")
             break
-        vacancies_pages.append(response)
-        if not response.json()['more']:
+        vacancies_pages.append(vacancies_page)
+        if not vacancies_page['more']:
             break
 
     logging.info(f"Завершено получение данных по языку {language} от сервиса SJ")
@@ -118,8 +120,8 @@ def process_vacancies_hh(vacancies_pages):
         "vacancies_found": 0,
     }
     for vacancies_page in vacancies_pages:
-        vacancies = vacancies_page.json()["items"]
-        total_vacancies = vacancies_page.json()["found"]
+        vacancies = vacancies_page["items"]
+        total_vacancies = vacancies_page["found"]
         for vacancy in vacancies:
             salary = calculate_rub_salary_hh(vacancy)
             if salary:
@@ -137,8 +139,8 @@ def process_vacancies_sj(vacancies_pages):
         "vacancies_found": 0,
     }
     for vacancies_page in vacancies_pages:
-        vacancies = vacancies_page.json()["objects"]
-        total_vacancies = vacancies_page.json()["total"]
+        vacancies = vacancies_page["objects"]
+        total_vacancies = vacancies_page["total"]
         for vacancy in vacancies:
             salary = calculate_rub_salary_sj(vacancy)
             if salary:
